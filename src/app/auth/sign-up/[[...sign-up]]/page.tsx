@@ -49,7 +49,10 @@ const SignUpPage = () => {
       </div>
       <div className="flex flex-1 items-center justify-center p-6 md:p-10 lg:justify-start">
         <div className="w-full max-w-md">
-          <h2 className="mb-6 text-2xl font-bold">WorkWise — Smart Task Manager</h2>
+          <h2 className="text-2xl font-bold text-center lg:pr-14">WorkWise</h2>
+          <p className="text-muted-for mt-2 text-sm mb-6 text-center text-muted-foregroundtext-center lg:pr-14">
+            Smart Task Manager
+          </p>
           <SignUp />
         </div>
       </div>
