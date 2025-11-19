@@ -33,11 +33,11 @@ export const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) =
     <Sidebar {...props}>
       <SidebarHeader className="border-b p-0">
         <SidebarMenu>
-          <SidebarMenuItem>
+          <SidebarMenuItem className="py-2">
             <Button variant="ghost" asChild>
               <Link href="/">
                 <Image src="/icon.svg" width={20} height={20} alt="icon" />
-                <span className="text-base font-semibold">WorkWise</span>
+                <span className="text-xl font-semibold">WorkWise</span>
               </Link>
             </Button>
           </SidebarMenuItem>

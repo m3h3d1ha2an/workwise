@@ -6,8 +6,8 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
-      <Sidebar variant="inset" />
-      <Content>
+      <Sidebar variant="inset" className="border-r p-0" />
+      <Content className="m-0!">
         <Header />
         <div className="flex flex-1 flex-col">{children}</div>
       </Content>
