@@ -22,7 +22,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import navigations from "@/data/navigations";
+import navigations from "@/lib/navigations";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 
