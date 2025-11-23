@@ -8,17 +8,13 @@ export default function Dashboard() {
           <Card className="@container/card">
             <CardHeader>
               <CardDescription>Total Projects</CardDescription>
-              <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                $1,250.00
-              </CardTitle>
+              <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">$1,250.00</CardTitle>
             </CardHeader>
           </Card>
           <Card className="@container/card">
             <CardHeader>
               <CardDescription>Total Tasks</CardDescription>
-              <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                $1,250.00
-              </CardTitle>
+              <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">$1,250.00</CardTitle>
             </CardHeader>
           </Card>
         </div>

@@ -9,7 +9,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
       <Sidebar variant="inset" className="border-r p-0" />
       <Content className="m-0!">
         <Header />
-        <div className="flex flex-1 flex-col">{children}</div>
+        <div className="flex flex-1 flex-col p-4">{children}</div>
       </Content>
     </SidebarProvider>
   );

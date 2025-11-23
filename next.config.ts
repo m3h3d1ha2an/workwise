@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   typedRoutes: true,
+  allowedDevOrigins: ["*"],
   compiler: {
     removeConsole: env.NODE_ENV === "production",
   },

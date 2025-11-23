@@ -20,14 +20,14 @@ const navigations: NavItem[] = [
     icon: House,
   },
   {
-    title: "Projects",
-    url: "/projects",
-    icon: Folder,
-  },
-  {
     title: "Teams",
     url: "/teams",
     icon: UsersRound,
+  },
+  {
+    title: "Projects",
+    url: "/projects",
+    icon: Folder,
   },
   {
     title: "Tasks",

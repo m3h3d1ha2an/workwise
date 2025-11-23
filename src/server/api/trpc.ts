@@ -7,10 +7,10 @@
  * need to use are documented accordingly near the end.
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { treeifyError, ZodError } from "zod";
+import { auth } from "@/server/better-auth";
 import { db } from "@/server/db";
 
 /**
@@ -26,7 +26,7 @@ import { db } from "@/server/db";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (options: { headers: Headers }) => {
-  const session = await auth();
+  const session = await auth.api.getSession({ headers: options.headers });
   return { db, session, ...options };
 };
 
@@ -95,12 +95,10 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
 });
 
 const isAuthed = t.middleware(async ({ ctx, next }) => {
-  const { isAuthenticated, userId: id } = ctx.session;
-  if (!isAuthenticated || !id) {
+  if (!ctx.session?.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
-  await ctx.db.user.upsert({ where: { id }, update: {}, create: { id } });
-  return next({ ctx: { session: { ...ctx.session, userId: id } } });
+  return next({ ctx: { session: { ...ctx.session, user: ctx.session.user } } });
 });
 
 /**

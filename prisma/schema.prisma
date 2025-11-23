@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -9,11 +10,21 @@ datasource db {
 
 model User {
   id        String   @id
-  createdAt DateTime @default(now())
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
 
+  sessions      Session[]
+  accounts      Account[]
   teams Team[] // 1 User -> many Teams (User is the owner/creator of teams)
 
+
+  createdAt DateTime @default(now())
+  updatedAt     DateTime  @updatedAt
+
   @@map("users")
+  @@unique([email])
 }
 
 model Member {
@@ -144,4 +155,57 @@ enum Status {
   Pending
   InProgress
   Done
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  ipAddress String?
+  userAgent String?
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
 }

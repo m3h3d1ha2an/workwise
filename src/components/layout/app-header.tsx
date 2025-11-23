@@ -2,14 +2,7 @@
 import { HomeIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Fragment, useMemo } from "react";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Button } from "../ui/button";
 import AppUser from "./app-user";
 
@@ -28,10 +21,7 @@ export const AppHeader = () => {
   }, [pathname]);
 
   return (
-    <header
-      data-slot="site-header"
-      className="bg-background sticky top-0 z-50 flex w-full items-center border-b"
-    >
+    <header data-slot="site-header" className="bg-background sticky top-0 z-50 flex w-full items-center border-b">
       <div className="flex w-full items-center gap-2 p-2 px-4">
         <Breadcrumb className="hidden sm:block">
           <BreadcrumbList>

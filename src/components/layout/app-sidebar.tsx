@@ -1,6 +1,5 @@
 "use client";
 
-import { useClerk } from "@clerk/nextjs";
 import { Activity, ChevronRight, Settings } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,7 +27,6 @@ import { Button } from "../ui/button";
 
 export const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
   const pathname = usePathname();
-  const { openUserProfile } = useClerk();
   return (
     <Sidebar {...props}>
       <SidebarHeader className="border-b p-0">
@@ -54,16 +52,9 @@ export const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) =
                       asChild
                       tooltip={item.title}
                       disabled={item.disabled}
-                      className={cn(
-                        "hover:bg-gray-200 min-w-8 duration-200 ease-linear",
-                        pathname === item.url && "bg-gray-200",
-                      )}
+                      className={cn("hover:bg-gray-200 min-w-8 duration-200 ease-linear", pathname === item.url && "bg-gray-200")}
                     >
-                      <Link
-                        href={item.disabled ? "#" : item.url}
-                        data-disabled={item.disabled}
-                        className="data-[disabled=true]:opacity-50"
-                      >
+                      <Link href={item.disabled ? "#" : item.url} data-disabled={item.disabled} className="data-[disabled=true]:opacity-50">
                         <item.icon className="size-8" />
                         <span>{item.title}</span>
                       </Link>
@@ -101,13 +92,7 @@ export const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) =
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className={cn(
-                "hover:bg-gray-200 min-w-8 duration-200 ease-linear",
-                pathname === "/activity" && "bg-gray-200",
-              )}
-            >
+            <SidebarMenuButton asChild className={cn("hover:bg-gray-200 min-w-8 duration-200 ease-linear", pathname === "/activity" && "bg-gray-200")}>
               <Link href="/activity">
                 <Activity className="size-8" />
                 <span>Activity</span>
@@ -115,10 +100,7 @@ export const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) =
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              className="cursor-pointer hover:bg-gray-200 "
-              onClick={() => openUserProfile()}
-            >
+            <SidebarMenuButton className="cursor-pointer hover:bg-gray-200 ">
               <Settings className="size-8" />
               Settings
             </SidebarMenuButton>
