@@ -2,6 +2,7 @@
 
 ## TODO
 
+- [] Add prisma v7
 - [] Deploy to hosting (Vercel)
 - [] Generate basic ui with mock data
 - [] Actually set up a database (neondb)
