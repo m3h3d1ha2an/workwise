@@ -124,3 +124,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation: none;
+  mix-blend-mode: normal;
+}

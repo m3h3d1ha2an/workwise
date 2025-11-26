@@ -7,23 +7,15 @@
     "incremental": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "es2023"
-    ],
+    "lib": ["dom", "dom.iterable", "es2023"],
     "module": "esnext",
     "moduleDetection": "force",
     "moduleResolution": "bundler",
     "noEmit": true,
     "noUncheckedIndexedAccess": true,
     "paths": {
-      "~/*": [
-        "./src/*"
-      ],
-      "~/prisma/client": [
-        "./prisma/generated/client.ts"
-      ]
+      "~/*": ["./src/*"],
+      "~/prisma/client": ["./prisma/generated/client.ts"]
     },
     "plugins": [
       {
@@ -37,10 +29,7 @@
     "verbatimModuleSyntax": true,
     "strictNullChecks": true
   },
-  "exclude": [
-    "node_modules",
-    "generated"
-  ],
+  "exclude": ["node_modules", "generated"],
   "include": [
     "next-env.d.ts",
     "**/*.ts",

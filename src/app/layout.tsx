@@ -2,6 +2,8 @@ import "~/styles/globals.css";
 
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { ThemeProvider } from "~/components/theme-provider";
+import { ThemeToggler } from "~/components/theme-toggler";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -18,9 +20,19 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => (
-  <html className={geist.variable} lang="en">
-    <body>{children}</body>
+const RootLayout = ({ children }: LayoutProps<"/">) => (
+  <html className={geist.variable} lang="en" suppressHydrationWarning>
+    <body>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        disableTransitionOnChange
+        enableSystem
+      >
+        <ThemeToggler className="cursor-pointer" />
+        {children}
+      </ThemeProvider>
+    </body>
   </html>
 );
 
