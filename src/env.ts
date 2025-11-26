@@ -1,5 +1,8 @@
 import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "zod";
+import type { SignOptions } from "jsonwebtoken";
+import { type ZodType, z } from "zod";
+
+type ExpiresIn = Exclude<SignOptions["expiresIn"], number | undefined>;
 
 export const env = createEnv({
   /**
@@ -7,10 +10,22 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    DATABASE_URL: z.url(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .prefault("development"),
+    DATABASE_URL: z.url(),
+    ACCESS_TOKEN_SECRET: z.hex().length(64, {
+      error: "ACCESS_TOKEN_SECRET must be 64 characters (32 bytes)",
+    }),
+    ACCESS_TOKEN_EXPIRES_IN: z.string().regex(/^\d+(ms|s|m|h|d|w|y)$/i, {
+      error: "Must be a valid duration like '15m', '7d', '10h'",
+    }) as ZodType<ExpiresIn>,
+    REFRESH_TOKEN_SECRET: z.hex().length(128, {
+      error: "REFRESH_TOKEN_SECRET must be 128 characters (64 bytes)",
+    }),
+    REFRESH_TOKEN_EXPIRES_IN: z.string().regex(/^\d+(ms|s|m|h|d|w|y)$/i, {
+      error: "Must be a valid duration like '15m', '7d', '10h'",
+    }) as ZodType<ExpiresIn>,
   },
 
   /**
@@ -27,9 +42,12 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
-    DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
-    // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+    DATABASE_URL: process.env.DATABASE_URL,
+    ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
+    ACCESS_TOKEN_EXPIRES_IN: process.env.ACCESS_TOKEN_EXPIRES_IN,
+    REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET,
+    REFRESH_TOKEN_EXPIRES_IN: process.env.REFRESH_TOKEN_EXPIRES_IN,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
