@@ -6,29 +6,6 @@ type ExpiresIn = Exclude<SignOptions["expiresIn"], number | undefined>;
 
 export const env = createEnv({
   /**
-   * Specify your server-side environment variables schema here. This way you can ensure the app
-   * isn't built with invalid env vars.
-   */
-  server: {
-    NODE_ENV: z
-      .enum(["development", "test", "production"])
-      .prefault("development"),
-    DATABASE_URL: z.url(),
-    ACCESS_TOKEN_SECRET: z.hex().length(64, {
-      error: "ACCESS_TOKEN_SECRET must be 64 characters (32 bytes)",
-    }),
-    ACCESS_TOKEN_EXPIRES_IN: z.string().regex(/^\d+(ms|s|m|h|d|w|y)$/i, {
-      error: "Must be a valid duration like '15m', '7d', '10h'",
-    }) as ZodType<ExpiresIn>,
-    REFRESH_TOKEN_SECRET: z.hex().length(128, {
-      error: "REFRESH_TOKEN_SECRET must be 128 characters (64 bytes)",
-    }),
-    REFRESH_TOKEN_EXPIRES_IN: z.string().regex(/^\d+(ms|s|m|h|d|w|y)$/i, {
-      error: "Must be a valid duration like '15m', '7d', '10h'",
-    }) as ZodType<ExpiresIn>,
-  },
-
-  /**
    * Specify your client-side environment variables schema here. This way you can ensure the app
    * isn't built with invalid env vars. To expose them to the client, prefix them with
    * `NEXT_PUBLIC_`.
@@ -36,27 +13,49 @@ export const env = createEnv({
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
   },
+  /**
+   * Makes it so that empty strings are treated as undefined. `SOME_VAR: z.string()` and
+   * `SOME_VAR=''` will throw an error.
+   */
+  emptyStringAsUndefined: true,
 
   /**
    * You can't destruct `process.env` as a regular object in the Next.js edge runtimes (e.g.
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
-    NODE_ENV: process.env.NODE_ENV,
-    DATABASE_URL: process.env.DATABASE_URL,
-    ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
     ACCESS_TOKEN_EXPIRES_IN: process.env.ACCESS_TOKEN_EXPIRES_IN,
-    REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET,
+    ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
+    DATABASE_URL: process.env.DATABASE_URL,
+    NODE_ENV: process.env.NODE_ENV,
     REFRESH_TOKEN_EXPIRES_IN: process.env.REFRESH_TOKEN_EXPIRES_IN,
+    REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET,
+  },
+  /**
+   * Specify your server-side environment variables schema here. This way you can ensure the app
+   * isn't built with invalid env vars.
+   */
+  server: {
+    ACCESS_TOKEN_EXPIRES_IN: z.string().regex(/^\d+(ms|s|m|h|d|w|y)$/i, {
+      error: "Must be a valid duration like '15m', '7d', '10h'",
+    }) as ZodType<ExpiresIn>,
+    ACCESS_TOKEN_SECRET: z.hex().length(64, {
+      error: "ACCESS_TOKEN_SECRET must be 64 characters (32 bytes)",
+    }),
+    DATABASE_URL: z.url(),
+    NODE_ENV: z
+      .enum(["development", "test", "production"])
+      .prefault("development"),
+    REFRESH_TOKEN_EXPIRES_IN: z.string().regex(/^\d+(ms|s|m|h|d|w|y)$/i, {
+      error: "Must be a valid duration like '15m', '7d', '10h'",
+    }) as ZodType<ExpiresIn>,
+    REFRESH_TOKEN_SECRET: z.hex().length(128, {
+      error: "REFRESH_TOKEN_SECRET must be 128 characters (64 bytes)",
+    }),
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
    * useful for Docker builds.
    */
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
-  /**
-   * Makes it so that empty strings are treated as undefined. `SOME_VAR: z.string()` and
-   * `SOME_VAR=''` will throw an error.
-   */
-  emptyStringAsUndefined: true,
 });

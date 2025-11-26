@@ -19,14 +19,14 @@ export type ApiResponse<Data> = {
  * @returns A NextResponse object ready to be returned from your route handler.
  */
 export const SendResponse = <Data>(
-  status: HttpStatusValue,
-  response: ApiResponse<Data>,
+  status: HttpStatusValue | number,
+  response: ApiResponse<Data>
 ) => {
   const body: ApiResponse<Data> = {
-    success: response.success,
+    data: response.data ?? null,
     message: response.message,
     meta: response.meta ?? null,
-    data: response.data ?? null,
+    success: response.success,
   };
 
   return NextResponse.json(body, { status });
