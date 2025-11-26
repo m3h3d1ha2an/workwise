@@ -1,5 +1,4 @@
 "use client";
-
 import { AnimatePresence, easeInOut, motion } from "framer-motion";
 import {
   ArrowRight,
@@ -97,7 +96,7 @@ const AuthCard = ({
 }: {
   mode: AuthMode;
   formHeight: number | "auto";
-  formRef: RefObject<HTMLDivElement | null>; // Updated type here
+  formRef: RefObject<HTMLDivElement | null>;
   handleSubmit: (e: FormEvent) => Promise<void>;
   children: React.ReactNode;
 }) => (
@@ -148,34 +147,43 @@ const AuthFormFields = ({
 }: {
   mode: AuthMode;
   showPassword: boolean;
-  setShowPassword: (show: boolean) => void; // Add setShowPassword type
+  setShowPassword: (show: boolean) => void;
 }) => (
-  <>
-    <motion.div
-      animate={{
-        height: mode === "signup" ? "auto" : 0,
-        opacity: mode === "signup" ? 1 : 0,
-      }}
-      initial={false}
-      style={{ overflow: "hidden" }}
-      transition={{ duration: 0.35, ease: easeInOut }}
-    >
-      <div className="mb-5 space-y-2">
-        <Label className="font-medium text-foreground text-sm" htmlFor="name">
-          Full Name
-        </Label>
-        <AnimatedInput
-          icon={<User className="h-5 w-5" />}
-          id="name"
-          placeholder="John Doe"
-          required={mode === "signup"}
-          type="text"
-        />
-      </div>
-    </motion.div>
+  // This motion.div is the single direct child for staggerContainer
+  <motion.div
+    className={
+      mode === "signup"
+        ? "grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2" // Grid for signup
+        : "space-y-5" // Stacked for signin
+    } // This block animates into view as one item
+    // Conditionally apply layout classes inside AuthFormFields
+    variants={itemVariants}
+  >
+    {/* Full Name field (signup only) */}
+    {mode === "signup" && (
+      <motion.div
+        animate={{ height: "auto", opacity: 1 }}
+        initial={{ height: 0, opacity: 0 }}
+        style={{ overflow: "hidden" }}
+        transition={{ duration: 0.35, ease: easeInOut }}
+      >
+        <div className="space-y-2">
+          <Label className="font-medium text-foreground text-sm" htmlFor="name">
+            Full Name
+          </Label>
+          <AnimatedInput
+            icon={<User className="h-5 w-5" />}
+            id="name"
+            placeholder="John Doe"
+            required={mode === "signup"}
+            type="text"
+          />
+        </div>
+      </motion.div>
+    )}
 
     {/* Email field */}
-    <motion.div className="mb-5 space-y-2" variants={itemVariants}>
+    <div className="space-y-2">
       <Label className="font-medium text-foreground text-sm" htmlFor="email">
         Email
       </Label>
@@ -186,10 +194,10 @@ const AuthFormFields = ({
         required
         type="email"
       />
-    </motion.div>
+    </div>
 
     {/* Password field */}
-    <motion.div className="mb-5 space-y-2" variants={itemVariants}>
+    <div className="space-y-2">
       <Label className="font-medium text-foreground text-sm" htmlFor="password">
         Password
       </Label>
@@ -201,7 +209,7 @@ const AuthFormFields = ({
         rightIcon={
           <button
             className="cursor-pointer text-muted-foreground transition-colors duration-200 hover:text-foreground"
-            onClick={() => setShowPassword(!showPassword)} // set showPassword from here
+            onClick={() => setShowPassword(!showPassword)}
             type="button"
           >
             <AnimatePresence mode="wait">
@@ -223,54 +231,34 @@ const AuthFormFields = ({
         }
         type={showPassword ? "text" : "password"}
       />
-    </motion.div>
+    </div>
 
-    <motion.div
-      animate={{
-        height: mode === "signup" ? "auto" : 0,
-        opacity: mode === "signup" ? 1 : 0,
-      }}
-      initial={false}
-      style={{ overflow: "hidden" }}
-      transition={{ duration: 0.35, ease: easeInOut }}
-    >
-      <div className="mb-5 space-y-2">
-        <Label
-          className="font-medium text-foreground text-sm"
-          htmlFor="confirmPassword"
-        >
-          Confirm Password
-        </Label>
-        <AnimatedInput
-          icon={<Lock className="h-5 w-5" />}
-          id="confirmPassword"
-          placeholder="••••••••"
-          required={mode === "signup"}
-          type={showPassword ? "text" : "password"}
-        />
-      </div>
-    </motion.div>
-
-    {/* Forgot password link (signin only) */}
-    <motion.div
-      animate={{
-        height: mode === "signin" ? "auto" : 0,
-        opacity: mode === "signin" ? 1 : 0,
-      }}
-      initial={false}
-      style={{ overflow: "hidden" }}
-      transition={{ duration: 0.35, ease: easeInOut }}
-    >
-      <div className="mb-6 flex justify-end">
-        <a
-          className="cursor-pointer text-muted-foreground text-sm transition-colors duration-200 hover:text-primary"
-          href="/auth/forgot-password"
-        >
-          Forgot password?
-        </a>
-      </div>
-    </motion.div>
-  </>
+    {/* Confirm Password field (signup only) */}
+    {mode === "signup" && (
+      <motion.div
+        animate={{ height: "auto", opacity: 1 }}
+        initial={{ height: 0, opacity: 0 }}
+        style={{ overflow: "hidden" }}
+        transition={{ duration: 0.35, ease: easeInOut }}
+      >
+        <div className="space-y-2">
+          <Label
+            className="font-medium text-foreground text-sm"
+            htmlFor="confirmPassword"
+          >
+            Confirm Password
+          </Label>
+          <AnimatedInput
+            icon={<Lock className="h-5 w-5" />}
+            id="confirmPassword"
+            placeholder="••••••••"
+            required={mode === "signup"}
+            type={showPassword ? "text" : "password"}
+          />
+        </div>
+      </motion.div>
+    )}
+  </motion.div>
 );
 
 const AuthSubmitButton = ({
@@ -280,7 +268,7 @@ const AuthSubmitButton = ({
   isLoading: boolean;
   mode: AuthMode;
 }) => (
-  <motion.div className="pt-2" variants={itemVariants}>
+  <motion.div className="pt-6" variants={itemVariants}>
     <Button
       className="relative h-12 w-full cursor-pointer overflow-hidden rounded-xl bg-muted-foreground font-semibold text-base transition-colors duration-300 hover:bg-foreground"
       disabled={isLoading}
@@ -357,9 +345,9 @@ const AuthToggleMode = ({
 export function AuthForm() {
   const [mode, setMode] = useState<AuthMode>("signin");
   const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // Moved state here!
+  const [showPassword, setShowPassword] = useState(false);
   const [formHeight, setFormHeight] = useState<number | "auto">("auto");
-  const formRef = useRef<HTMLDivElement | null>(null); // Kept useRef correct with RefObject<HTMLDivElement | null>
+  const formRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (formRef.current) {
@@ -385,7 +373,11 @@ export function AuthForm() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-md">
+    <div
+      className={`mx-auto w-full transition-all duration-300 ease-in-out ${
+        mode === "signup" ? "max-w-2xl" : "max-w-md"
+      }`}
+    >
       <AuthHeader mode={mode} />
       <AuthCard
         formHeight={formHeight}
@@ -396,7 +388,7 @@ export function AuthForm() {
         <AuthFormFields
           mode={mode}
           setShowPassword={setShowPassword}
-          showPassword={showPassword} // pass the setShowPassword to component
+          showPassword={showPassword}
         />
         <AuthSubmitButton isLoading={isLoading} mode={mode} />
       </AuthCard>

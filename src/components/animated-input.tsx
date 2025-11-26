@@ -92,7 +92,6 @@ export const AnimatedInput = ({
               color: isFocused
                 ? "hsl(var(--primary))"
                 : "hsl(var(--muted-foreground))",
-              scale: isFocused ? 1.1 : 1,
             }}
             className="absolute left-4 z-10 text-muted-foreground"
             transition={{ duration: 0.2 }}
@@ -131,5 +130,3 @@ export const AnimatedInput = ({
     </div>
   );
 };
-
-AnimatedInput.displayName = "AnimatedInput";
