@@ -2,20 +2,12 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-
-// ============================================================================
-// Server Action
-// ============================================================================
+import { ClearCookies } from "./cookies";
 
 /**
  * Sign out the current user
- *
- * Clears authentication cookies and redirects to the sign-in page.
  */
 export const signoutAction = async (): Promise<void> => {
-  const cookieStore = await cookies();
-  cookieStore.delete("access_token");
-  cookieStore.delete("refresh_token");
-
+  ClearCookies(await cookies());
   redirect("/auth/signin");
 };

@@ -1,84 +1,52 @@
-"use server";
-
-import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
 import z from "zod";
-import { HandleActionError } from "~/helpers/handle-action-error";
 import { JwtToken } from "~/helpers/jwt-token";
-import { type ActionResult, GenerateTokens, SetAuthCookies } from "./shared";
+import { ClearCookies, SetCookies } from "./cookies";
 
-// ============================================================================
-// Validation Schema
-// ============================================================================
-
-const RefreshTokenSchema = z.string().refine(
-  (token) => {
-    const result = JwtToken.Verify("refresh", token);
-    return result.success;
-  },
-  { message: "Invalid refresh token" }
-);
-
-// ============================================================================
-// Business Logic
-// ============================================================================
-
-const refreshUserTokens = (refreshToken: string) => {
-  // Verify refresh token
-  const decoded = JwtToken.Verify("refresh", refreshToken);
-  if (!decoded.success) {
-    throw new Error(decoded.result);
+const validateRefreshToken = (refreshToken: string) => {
+  const parsed = z.jwt({ alg: "HS512" }).safeParse(refreshToken);
+  if (!parsed.success) {
+    throw new Error(parsed.error.message);
   }
 
-  if (!decoded.result.userId) {
+  const decoded = JwtToken.Verify("refresh", refreshToken);
+  if (!decoded.success) {
+    throw new Error(decoded.payload);
+  }
+
+  if (!decoded.payload.userId) {
     throw new Error("Token missing userId claim");
   }
 
-  // Generate new tokens
-  return GenerateTokens(decoded.result.userId);
+  return decoded.payload.userId;
 };
 
-// ============================================================================
-// Server Action
-// ============================================================================
-
-/**
- * Refresh the user's access token
- *
- * Reads the refresh token from cookies, validates it, generates new tokens,
- * sets cookies, and revalidates the cache.
- *
- * @returns Success result with message or error
- */
-export const refreshAction = async (): Promise<ActionResult<void>> => {
+export const HandleTokenRefresh = (
+  request: NextRequest,
+  isAuthPage: boolean,
+  refreshToken: string
+) => {
   try {
-    const cookieStore = await cookies();
-    const refreshToken = cookieStore.get("refresh_token")?.value;
+    const userId = validateRefreshToken(refreshToken);
+    const response = NextResponse.next();
+    SetCookies(userId, response.cookies);
 
-    if (!refreshToken) {
-      return {
-        success: false,
-        error: "Refresh token not found.",
-      };
+    if (isAuthPage) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+    return response;
+  } catch (error) {
+    console.error("Token refresh failed in proxy (ex middleware):", error);
+    if (!isAuthPage) {
+      const response = NextResponse.redirect(
+        new URL("/auth/signin", request.url)
+      );
+      ClearCookies(response.cookies);
+      return response;
     }
 
-    // Validate refresh token
-    RefreshTokenSchema.parse(refreshToken);
-
-    // Generate new tokens
-    const { access, refresh } = refreshUserTokens(refreshToken);
-
-    // Set new authentication cookies
-    SetAuthCookies(cookieStore, access, refresh);
-
-    // Revalidate cache
-    revalidatePath("/");
-
-    return {
-      success: true,
-      message: "Tokens refreshed successfully.",
-    };
-  } catch (error) {
-    return HandleActionError(error);
+    const response = NextResponse.next();
+    ClearCookies(response.cookies);
+    return response;
   }
 };

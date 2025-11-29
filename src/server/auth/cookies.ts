@@ -1,30 +1,7 @@
 import type { cookies } from "next/headers";
+import type { NextResponse } from "next/server";
 import { env } from "~/env";
 import { JwtToken } from "~/helpers/jwt-token";
-
-/**
- * Result type for authentication Server Actions
- */
-export type ActionResult<T = void> =
-  | { success: true; data?: T; message: string }
-  | { success: false; error: string };
-
-/**
- * Token with expiration metadata
- */
-export type Token = {
-  token: string;
-  expires: Date;
-  maxAge: number;
-};
-
-/**
- * Access and refresh token pair
- */
-export type Tokens = {
-  access: Token;
-  refresh: Token;
-};
 
 type CookieDuration = {
   maxAge: number;
@@ -43,7 +20,7 @@ const MS_IN_YEAR = 365 * MS_IN_DAY;
 /**
  * Parse duration string (e.g., "15m", "7d") to milliseconds and Date
  */
-export const ParseExpiresIn = (value: string): CookieDuration => {
+const ParseExpiresIn = (value: string): CookieDuration => {
   const match = value.trim().match(DURATION_REGEX);
   if (!match) {
     throw new Error("Invalid expiresIn format");
@@ -109,55 +86,50 @@ export const ParseExpiresIn = (value: string): CookieDuration => {
   };
 };
 
-const cookieOptions = (expires: Date, maxAge: number) => ({
-  expires,
-  httpOnly: true,
-  maxAge,
-  path: "/",
-  sameSite: "strict" as const,
-  secure: env.NODE_ENV === "production",
-});
+/**
+ * Token cookie names
+ */
+export const TOKEN_COOKIES = {
+  ACCESS: "access_token",
+  REFRESH: "refresh_token",
+} as const;
+
+type CookieStore =
+  | NextResponse["cookies"]
+  | Awaited<ReturnType<typeof cookies>>;
 
 /**
  * Set both access and refresh auth cookies
  */
-export const SetAuthCookies = (
-  cookieStore: Awaited<ReturnType<typeof cookies>>,
-  access: Token,
-  refresh: Token
-) => {
-  cookieStore.set(
-    "access_token",
-    access.token,
-    cookieOptions(access.expires, access.maxAge)
-  );
-  cookieStore.set(
-    "refresh_token",
-    refresh.token,
-    cookieOptions(refresh.expires, refresh.maxAge)
-  );
-};
-
-/**
- * Generate access and refresh JWT tokens for a user
- */
-export const GenerateTokens = (userId: string): Tokens => {
+export const SetCookies = (userId: string, cookieStore: CookieStore) => {
   const accessToken = JwtToken.Generate("access", { userId });
   const accessMeta = ParseExpiresIn(env.ACCESS_TOKEN_EXPIRES_IN);
 
   const refreshToken = JwtToken.Generate("refresh", { userId });
   const refreshMeta = ParseExpiresIn(env.REFRESH_TOKEN_EXPIRES_IN);
 
-  return {
-    access: {
-      expires: accessMeta.expires,
-      maxAge: accessMeta.maxAge,
-      token: accessToken,
-    },
-    refresh: {
-      expires: refreshMeta.expires,
-      maxAge: refreshMeta.maxAge,
-      token: refreshToken,
-    },
-  };
+  cookieStore.set(TOKEN_COOKIES.ACCESS, accessToken, {
+    expires: accessMeta.expires,
+    httpOnly: true,
+    maxAge: accessMeta.maxAge,
+    path: "/",
+    sameSite: "strict" as const,
+    secure: env.NODE_ENV === "production",
+  });
+  cookieStore.set(TOKEN_COOKIES.REFRESH, refreshToken, {
+    expires: refreshMeta.expires,
+    httpOnly: true,
+    maxAge: refreshMeta.maxAge,
+    path: "/",
+    sameSite: "strict" as const,
+    secure: env.NODE_ENV === "production",
+  });
+};
+
+/**
+ * Clear both access and refresh auth cookies
+ */
+export const ClearCookies = (cookieStore: CookieStore) => {
+  cookieStore.delete(TOKEN_COOKIES.ACCESS);
+  cookieStore.delete(TOKEN_COOKIES.REFRESH);
 };

@@ -14,7 +14,7 @@ const isRedirectError = (error: unknown): boolean => {
 
 export const HandleActionError = (
   error: unknown
-): { success: false; error: string } => {
+): { success: false; message: string; data: unknown } => {
   // Let Next.js redirects pass through
   if (isRedirectError(error)) {
     throw error;
@@ -32,5 +32,5 @@ export const HandleActionError = (
     message = ExtractErrorMessage(error);
   }
 
-  return { success: false, error: message };
+  return { success: false, message, data: error };
 };

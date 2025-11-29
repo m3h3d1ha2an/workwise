@@ -1,7 +1,10 @@
 "use client";
 
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useActionState } from "react";
+import logo from "~/app/icon.png";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -14,7 +17,6 @@ import {
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { signupAction } from "~/server/auth/signup";
-
 export const SignUpForm = () => {
   const [state, formAction, isPending] = useActionState(
     signupAction,
@@ -23,20 +25,29 @@ export const SignUpForm = () => {
 
   return (
     <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>Sign Up</CardTitle>
-        <CardDescription>
-          Create an account to get started with WorkWise.
+      <CardHeader className="text-center">
+        <Image
+          alt="Logo"
+          className="mx-auto"
+          height={50}
+          src={logo}
+          width={50}
+        />
+        <CardTitle className="font-bold text-3xl text-foreground tracking-tight">
+          Get started
+        </CardTitle>
+        <CardDescription className="mt-2 text-base text-muted-foreground">
+          Create your account in seconds
         </CardDescription>
       </CardHeader>
       <form action={formAction}>
         <CardContent className="space-y-4">
           {/* Global Error Message */}
           {state?.success === false &&
-            state.error &&
-            !state.error.includes("{") && (
+            state.message &&
+            !state.message.includes("{") && (
               <div className="rounded-md bg-destructive/15 p-3 text-destructive text-sm">
-                {state.error}
+                {state.message}
               </div>
             )}
 
@@ -75,9 +86,17 @@ export const SignUpForm = () => {
             />
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col space-y-4">
-          <Button className="w-full" disabled={isPending} type="submit">
-            {isPending ? "Creating account..." : "Sign Up"}
+        <CardFooter className="mt-4 flex flex-col space-y-4">
+          <Button
+            className="w-full cursor-pointer"
+            disabled={isPending}
+            type="submit"
+          >
+            {isPending ? (
+              <Loader2 className="mr-2 size-4 animate-spin" />
+            ) : (
+              "Create Account"
+            )}
           </Button>
           <div className="text-center text-muted-foreground text-sm">
             Already have an account?{" "}

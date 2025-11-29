@@ -4,8 +4,8 @@ import { env } from "~/env";
 import { ExtractErrorMessage } from "./extract-error-message";
 
 export type JwtTokenPayload = JwtPayload & { userId?: string };
-type VerifySuccess = { success: true; result: JwtTokenPayload };
-type VerifyFailure = { success: false; result: string };
+type VerifySuccess = { success: true; payload: JwtTokenPayload };
+type VerifyFailure = { success: false; payload: string };
 type VerifyResponse = VerifySuccess | VerifyFailure;
 
 const Generate = (type: "access" | "refresh", payload: JwtTokenPayload) => {
@@ -26,11 +26,11 @@ const Verify = (type: "access" | "refresh", token: string): VerifyResponse => {
   try {
     const decoded = jwt.verify(token, secret, { algorithms: [algorithm] });
     if (typeof decoded === "string") {
-      return { result: "Invalid token payload structure", success: false };
+      return { payload: "Invalid token payload structure", success: false };
     }
-    return { result: decoded, success: true };
+    return { payload: decoded, success: true };
   } catch (error) {
-    return { result: ExtractErrorMessage(error), success: false };
+    return { payload: ExtractErrorMessage(error), success: false };
   }
 };
 

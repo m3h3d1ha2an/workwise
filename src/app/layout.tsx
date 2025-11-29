@@ -1,13 +1,12 @@
 import "~/styles/globals.css";
 
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Inter } from "next/font/google";
 import { ThemeProvider } from "~/components/theme-provider";
-import { ThemeToggler } from "~/components/theme-toggler";
 
-const geist = Geist({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-geist-sans",
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
@@ -21,7 +20,7 @@ export const metadata: Metadata = {
 };
 
 const RootLayout = ({ children }: React.PropsWithChildren) => (
-  <html className={geist.variable} lang="en" suppressHydrationWarning>
+  <html className={inter.variable} lang="en" suppressHydrationWarning>
     <body>
       <ThemeProvider
         attribute="class"
@@ -29,7 +28,6 @@ const RootLayout = ({ children }: React.PropsWithChildren) => (
         disableTransitionOnChange
         enableSystem
       >
-        <ThemeToggler className="cursor-pointer" />
         {children}
       </ThemeProvider>
     </body>
