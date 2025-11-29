@@ -1,11 +1,36 @@
 import type { cookies } from "next/headers";
 import { env } from "~/env";
-import { JwtToken } from "~/utils/jwt-token";
+import { JwtToken } from "~/helpers/jwt-token";
+
+/**
+ * Result type for authentication Server Actions
+ */
+export type ActionResult<T = void> =
+  | { success: true; data?: T; message: string }
+  | { success: false; error: string };
+
+/**
+ * Token with expiration metadata
+ */
+export type Token = {
+  token: string;
+  expires: Date;
+  maxAge: number;
+};
+
+/**
+ * Access and refresh token pair
+ */
+export type Tokens = {
+  access: Token;
+  refresh: Token;
+};
 
 type CookieDuration = {
-  maxAge: number; // seconds
-  expires: Date; // absolute expiration time
+  maxAge: number;
+  expires: Date;
 };
+
 const DURATION_REGEX = /(-?\d*\.?\d+)\s*([a-zA-Z]+)/;
 
 const MS_IN_SECOND = 1000;
@@ -15,7 +40,10 @@ const MS_IN_DAY = 24 * MS_IN_HOUR;
 const MS_IN_WEEK = 7 * MS_IN_DAY;
 const MS_IN_YEAR = 365 * MS_IN_DAY;
 
-export const parseExpiresIn = (value: string): CookieDuration => {
+/**
+ * Parse duration string (e.g., "15m", "7d") to milliseconds and Date
+ */
+export const ParseExpiresIn = (value: string): CookieDuration => {
   const match = value.trim().match(DURATION_REGEX);
   if (!match) {
     throw new Error("Invalid expiresIn format");
@@ -90,11 +118,10 @@ const cookieOptions = (expires: Date, maxAge: number) => ({
   secure: env.NODE_ENV === "production",
 });
 
-export type Token = { token: string; expires: Date; maxAge: number };
-export type Tokens = { access: Token; refresh: Token };
-
-// Helper: set both auth cookies in one place
-export const setAuthCookies = (
+/**
+ * Set both access and refresh auth cookies
+ */
+export const SetAuthCookies = (
   cookieStore: Awaited<ReturnType<typeof cookies>>,
   access: Token,
   refresh: Token
@@ -111,12 +138,15 @@ export const setAuthCookies = (
   );
 };
 
+/**
+ * Generate access and refresh JWT tokens for a user
+ */
 export const GenerateTokens = (userId: string): Tokens => {
   const accessToken = JwtToken.Generate("access", { userId });
-  const accessMeta = parseExpiresIn(env.ACCESS_TOKEN_EXPIRES_IN);
+  const accessMeta = ParseExpiresIn(env.ACCESS_TOKEN_EXPIRES_IN);
 
   const refreshToken = JwtToken.Generate("refresh", { userId });
-  const refreshMeta = parseExpiresIn(env.REFRESH_TOKEN_EXPIRES_IN);
+  const refreshMeta = ParseExpiresIn(env.REFRESH_TOKEN_EXPIRES_IN);
 
   return {
     access: {

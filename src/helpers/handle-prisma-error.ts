@@ -1,7 +1,7 @@
 import type { Prisma } from "~/prisma/client";
 import { HttpStatus } from "./http-status";
 
-export const handlePrismaError = (
+export const HandlePrismaError = (
   error: Prisma.PrismaClientKnownRequestError
 ) => {
   switch (error.code) {

@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-const RootLayout = ({ children }: LayoutProps<"/">) => (
+const RootLayout = ({ children }: React.PropsWithChildren) => (
   <html className={geist.variable} lang="en" suppressHydrationWarning>
     <body>
       <ThemeProvider

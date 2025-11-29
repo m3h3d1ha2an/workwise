@@ -6,7 +6,7 @@ import { ExtractErrorMessage } from "./extract-error-message";
 export type JwtTokenPayload = JwtPayload & { userId?: string };
 type VerifySuccess = { success: true; result: JwtTokenPayload };
 type VerifyFailure = { success: false; result: string };
-type VerifyRespone = VerifySuccess | VerifyFailure;
+type VerifyResponse = VerifySuccess | VerifyFailure;
 
 const Generate = (type: "access" | "refresh", payload: JwtTokenPayload) => {
   const secret =
@@ -19,7 +19,7 @@ const Generate = (type: "access" | "refresh", payload: JwtTokenPayload) => {
   return jwt.sign(payload, secret, { algorithm, expiresIn });
 };
 
-const Verify = (type: "access" | "refresh", token: string): VerifyRespone => {
+const Verify = (type: "access" | "refresh", token: string): VerifyResponse => {
   const secret =
     type === "access" ? env.ACCESS_TOKEN_SECRET : env.REFRESH_TOKEN_SECRET;
   const algorithm: Algorithm = type === "access" ? "HS256" : "HS512";
