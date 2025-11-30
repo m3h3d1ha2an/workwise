@@ -1,12 +1,15 @@
 import "~/styles/globals.css";
 
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 import { ThemeProvider } from "~/components/theme-provider";
+import { cn } from "~/lib/utils";
 
-const inter = Inter({
+const spacegrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-inter",
+  display: "swap",
+  preload: true,
+  variable: "--font-space-grotesk",
 });
 
 export const metadata: Metadata = {
@@ -20,7 +23,11 @@ export const metadata: Metadata = {
 };
 
 const RootLayout = ({ children }: React.PropsWithChildren) => (
-  <html className={inter.variable} lang="en" suppressHydrationWarning>
+  <html
+    className={cn(spacegrotesk.variable, "antialiased")}
+    lang="en"
+    suppressHydrationWarning
+  >
     <body>
       <ThemeProvider
         attribute="class"

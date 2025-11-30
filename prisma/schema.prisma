@@ -8,131 +8,83 @@ datasource db {
 }
 
 model User {
- id       String @id @default(uuid())
- name     String
- email    String @unique
- password String
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  teams     Team[]
 
- teams Team[]
-
- createdAt     DateTime  @default(now())
- updatedAt     DateTime  @updatedAt
-
- @@map("users")
+  @@map("users")
 }
 
 model Team {
-  id   String @id @default(uuid())
-  name String
-
-  ownerId String
-
-  // Relation to the owner User. onUpdate: Cascade => if the User is updated,
-  // onDelete: Restrict => prevents deleting the User if Teams still reference it.
-  owner User @relation(fields: [ownerId], references: [id], onUpdate: Cascade, onDelete: Restrict)
-
-  // One Team has many Projects
-  projects Project[]
-
-  // One Team has many Members
-  members Member[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String    @id @default(uuid())
+  name      String
+  ownerId   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  members   Member[]
+  projects  Project[]
+  owner     User      @relation(fields: [ownerId], references: [id])
 
   @@map("teams")
 }
 
 model Member {
-  id       String @id @default(uuid())
-  name     String
-  role     String
-  capacity Int    @default(0)
-
-  // Foreign key column pointing to the Team this member belongs to.
-  // This is a required relation: every Member must have a team.
-  teamId String
-
-  // The relation field that links the Member to its Team record.
-  // if the Team is updated/deleted, the Member's teamId will be updated/deleted.
-  team Team @relation(fields: [teamId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-
-  tasks Task[] // Inverse relation: one Member -> many Tasks (tasks assigned to this member).
-
+  id        String   @id @default(uuid())
+  name      String
+  role      String
+  capacity  Int      @default(0)
+  teamId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  tasks     Task[]
 
   @@map("members")
 }
 
 model Project {
-  id   String @id @default(uuid())
-  name String
-
-  // Required FK: Project belongs to a Team
-  teamId String
-
-  // Relation to Team. If Team is updated or deleted, project will be updated or deleted.
-  team Team @relation(fields: [teamId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-
-  // One Project -> many Tasks
-  tasks Task[]
-
+  id        String   @id @default(uuid())
+  name      String
+  teamId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  tasks     Task[]
 
   @@map("projects")
 }
 
 model Task {
-  id          String   @id @default(uuid())
+  id          String     @id @default(uuid())
   title       String
   description String
-  status      Status   @default(Pending)
-  priority    Priority @default(Low)
-
-  // Nullable FK: if null the task is "Unassigned"
-  memberId String?
-
-  // Optional relation: task may point to a Member or be null (unassigned).
-  // When a Member is deleted, the task's member field will be set to null.
-  member Member? @relation(fields: [memberId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-
-  // Required FK: every Task must belong to a Project (tasks cannot be orphaned)
-  projectId String
-
-  // Required relation to Project. Deleting a Project should decide what happens to tasks:
-  // consider onDelete: Cascade if you want tasks removed with project, or Restrict otherwise.
-  project Project @relation(fields: [projectId], references: [id])
-
-  // Inverse relation: a task can have many activity entries (reassign logs)
-  activities Activity[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  status      Status     @default(Pending)
+  priority    Priority   @default(Low)
+  memberId    String?
+  projectId   String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  activities  Activity[]
+  member      Member?    @relation(fields: [memberId], references: [id])
+  project     Project    @relation(fields: [projectId], references: [id])
 
   @@index([projectId, memberId])
   @@map("tasks")
 }
 
 model Activity {
-  id String @id @default(uuid())
-
-  // Nullable FK: an activity may reference a Task or be a general/team-level note
-  taskId String?
-  task   Task?   @relation(fields: [taskId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-
-  // Store previous and new member IDs for reassignments; nullable for non-reassign events
+  id           String   @id @default(uuid())
+  taskId       String?
   fromMemberId String?
   toMemberId   String?
-
-  // Optional: store the actor (Clerk user id) who triggered the activity
-  actorId String?
-
-  // Optional free-text note / reason
-  note String?
-
-  createdAt DateTime @default(now())
+  actorId      String?
+  note         String?
+  createdAt    DateTime @default(now())
+  task         Task?    @relation(fields: [taskId], references: [id])
 
   @@index([createdAt])
   @@map("activities")
