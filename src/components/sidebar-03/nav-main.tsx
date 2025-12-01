@@ -1,5 +1,9 @@
 "use client";
 
+import { ChevronDown, ChevronUp } from "lucide-react";
+import Link from "next/link";
+import type React from "react";
+import { useState } from "react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -15,10 +19,6 @@ import {
   useSidebar,
 } from "~/components/ui/sidebar";
 import { cn } from "~/lib/utils";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import Link from "next/link";
-import type React from "react";
-import { useState } from "react";
 
 export type Route = {
   id: string;
@@ -47,11 +47,11 @@ export default function DashboardNavigation({ routes }: { routes: Route[] }) {
           <SidebarMenuItem key={route.id}>
             {hasSubRoutes ? (
               <Collapsible
-                open={isOpen}
+                className="w-full"
                 onOpenChange={(open) =>
                   setOpenCollapsible(open ? route.id : null)
                 }
-                className="w-full"
+                open={isOpen}
               >
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton
@@ -65,7 +65,7 @@ export default function DashboardNavigation({ routes }: { routes: Route[] }) {
                   >
                     {route.icon}
                     {!isCollapsed && (
-                      <span className="ml-2 flex-1 text-sm font-medium">
+                      <span className="ml-2 flex-1 font-medium text-sm">
                         {route.title}
                       </span>
                     )}
@@ -83,17 +83,17 @@ export default function DashboardNavigation({ routes }: { routes: Route[] }) {
 
                 {!isCollapsed && (
                   <CollapsibleContent>
-                    <SidebarMenuSub className="my-1 ml-3.5 ">
+                    <SidebarMenuSub className="my-1 ml-3.5">
                       {route.subs?.map((subRoute) => (
                         <SidebarMenuSubItem
-                          key={`${route.id}-${subRoute.title}`}
                           className="h-auto"
+                          key={`${route.id}-${subRoute.title}`}
                         >
                           <SidebarMenuSubButton asChild>
                             <Link
+                              className="flex items-center rounded-md px-4 py-1.5 font-medium text-muted-foreground text-sm hover:bg-sidebar-muted hover:text-foreground"
                               href={subRoute.link}
                               prefetch={true}
-                              className="flex items-center rounded-md px-4 py-1.5 text-sm font-medium text-muted-foreground hover:bg-sidebar-muted hover:text-foreground"
                             >
                               {subRoute.title}
                             </Link>
@@ -105,18 +105,18 @@ export default function DashboardNavigation({ routes }: { routes: Route[] }) {
                 )}
               </Collapsible>
             ) : (
-              <SidebarMenuButton tooltip={route.title} asChild>
+              <SidebarMenuButton asChild tooltip={route.title}>
                 <Link
-                  href={route.link}
-                  prefetch={true}
                   className={cn(
-                    "flex items-center rounded-lg px-2 transition-colors text-muted-foreground hover:bg-sidebar-muted hover:text-foreground",
+                    "flex items-center rounded-lg px-2 text-muted-foreground transition-colors hover:bg-sidebar-muted hover:text-foreground",
                     isCollapsed && "justify-center"
                   )}
+                  href={route.link}
+                  prefetch={true}
                 >
                   {route.icon}
                   {!isCollapsed && (
-                    <span className="ml-2 text-sm font-medium">
+                    <span className="ml-2 font-medium text-sm">
                       {route.title}
                     </span>
                   )}
