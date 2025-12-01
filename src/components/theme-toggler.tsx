@@ -69,25 +69,25 @@ export const ThemeToggler = ({
       {...props}
     >
       <Activity mode={mounted ? "visible" : "hidden"}>
-        (resolvedTheme === "dark" ? (
-        <Sun
-          className={cn(
-            "size-6 transition-all",
-            resolvedTheme === "dark"
-              ? "rotate-0 scale-100"
-              : "-rotate-90 scale-0"
-          )}
-        />
+        {resolvedTheme === "dark" ? (
+          <Sun
+            className={cn(
+              "size-6 transition-all",
+              resolvedTheme === "dark"
+                ? "rotate-0 scale-100"
+                : "-rotate-90 scale-0"
+            )}
+          />
         ) : (
-        <Moon
-          className={cn(
-            "absolute size-6 transition-all",
-            resolvedTheme !== "dark"
-              ? "rotate-0 scale-100"
-              : "rotate-90 scale-0"
-          )}
-        />
-        ))
+          <Moon
+            className={cn(
+              "absolute size-6 transition-all",
+              resolvedTheme !== "dark"
+                ? "rotate-0 scale-100"
+                : "rotate-90 scale-0"
+            )}
+          />
+        )}
       </Activity>
       <span className="sr-only">Toggle theme</span>
     </Button>
