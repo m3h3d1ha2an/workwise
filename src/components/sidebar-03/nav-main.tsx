@@ -60,7 +60,7 @@ export default function DashboardNavigation({ routes }: { routes: Route[] }) {
                       isOpen
                         ? "bg-sidebar-muted text-foreground"
                         : "text-muted-foreground hover:bg-sidebar-muted hover:text-foreground",
-                      isCollapsed && "justify-center"
+                      !!isCollapsed && "justify-center"
                     )}
                   >
                     {route.icon}
@@ -109,7 +109,7 @@ export default function DashboardNavigation({ routes }: { routes: Route[] }) {
                 <Link
                   className={cn(
                     "flex items-center rounded-lg px-2 text-muted-foreground transition-colors hover:bg-sidebar-muted hover:text-foreground",
-                    isCollapsed && "justify-center"
+                    !!isCollapsed && "justify-center"
                   )}
                   href={route.link}
                   prefetch={true}
