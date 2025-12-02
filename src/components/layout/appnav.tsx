@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronDown, ChevronUp } from "lucide-react";
+import type { Route as NextRoute } from "next";
 import Link from "next/link";
 import type React from "react";
 import { useState } from "react";
@@ -24,15 +25,15 @@ export type Route = {
   id: string;
   title: string;
   icon?: React.ReactNode;
-  link: string;
+  link: NextRoute;
   subs?: {
     title: string;
-    link: string;
+    link: NextRoute;
     icon?: React.ReactNode;
   }[];
 };
 
-export default function DashboardNavigation({ routes }: { routes: Route[] }) {
+export const AppNav = ({ routes }: { routes: Route[] }) => {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
   const [openCollapsible, setOpenCollapsible] = useState<string | null>(null);
@@ -128,4 +129,4 @@ export default function DashboardNavigation({ routes }: { routes: Route[] }) {
       })}
     </SidebarMenu>
   );
-}
+};

@@ -1,15 +1,18 @@
 import "~/styles/globals.css";
 
 import type { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "~/components/theme-provider";
 import { cn } from "~/lib/utils";
 
-const spacegrotesk = Space_Grotesk({
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
-  display: "swap",
-  preload: true,
-  variable: "--font-space-grotesk",
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -24,7 +27,7 @@ export const metadata: Metadata = {
 
 const RootLayout = ({ children }: React.PropsWithChildren) => (
   <html
-    className={cn(spacegrotesk.variable, "antialiased")}
+    className={cn(geistSans.variable, geistMono.variable, "antialiased")}
     lang="en"
     suppressHydrationWarning
   >

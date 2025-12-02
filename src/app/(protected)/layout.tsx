@@ -1,11 +1,13 @@
-import { DashboardSidebar } from "~/components/sidebar-03/app-sidebar";
+import { Appbar } from "~/components/layout/appbar";
 import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar";
 
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => (
   <SidebarProvider>
     <div className="relative flex h-screen w-full">
-      <DashboardSidebar />
-      <SidebarInset className="flex flex-col">{children}</SidebarInset>
+      <Appbar />
+      <SidebarInset className="m-2 flex flex-col rounded-md border border-primary">
+        {children}
+      </SidebarInset>
     </div>
   </SidebarProvider>
 );

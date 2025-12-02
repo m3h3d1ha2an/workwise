@@ -1,8 +1,7 @@
 "use client";
-
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Activity, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
@@ -59,6 +58,10 @@ export const ThemeToggler = ({
     );
   }, [resolvedTheme, setTheme, duration]);
 
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <Button
       className={cn(className)}
@@ -68,27 +71,25 @@ export const ThemeToggler = ({
       variant="link"
       {...props}
     >
-      <Activity mode={mounted ? "visible" : "hidden"}>
-        {resolvedTheme === "dark" ? (
-          <Sun
-            className={cn(
-              "size-6 transition-all",
-              resolvedTheme === "dark"
-                ? "rotate-0 scale-100"
-                : "-rotate-90 scale-0"
-            )}
-          />
-        ) : (
-          <Moon
-            className={cn(
-              "absolute size-6 transition-all",
-              resolvedTheme !== "dark"
-                ? "rotate-0 scale-100"
-                : "rotate-90 scale-0"
-            )}
-          />
-        )}
-      </Activity>
+      {resolvedTheme === "dark" ? (
+        <Sun
+          className={cn(
+            "size-5 transition-all",
+            resolvedTheme === "dark"
+              ? "rotate-0 scale-100"
+              : "-rotate-90 scale-0"
+          )}
+        />
+      ) : (
+        <Moon
+          className={cn(
+            "absolute size-5 transition-all",
+            resolvedTheme !== "dark"
+              ? "rotate-0 scale-100"
+              : "rotate-90 scale-0"
+          )}
+        />
+      )}
       <span className="sr-only">Toggle theme</span>
     </Button>
   );
